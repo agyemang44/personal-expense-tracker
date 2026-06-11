@@ -1,9 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head><title>Expense Tracker</title></head>
+<head>
+    <title>Expense Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 40px auto; padding: 20px; }
+        .chart-container { width: 400px; margin: 30px auto; }
+    </style>
+</head>
 <body>
     <h1>My Expenses</h1>
     <h2>Total Spent: GHS {{ "%.2f"|format(total) }}</h2>
+    
+    <div class="chart-container">
+        <canvas id="categoryChart"></canvas>
+    </div>
     
     <h3>Add Expense</h3>
     <form method="POST" action="/add">
@@ -16,11 +27,28 @@
     </form>
     
     <h3>History</h3>
-    <table border="1">
+    <table border="1" style="width:100%; margin-top:20px;">
         <tr><th>Date</th><th>Category</th><th>Amount</th><th>Note</th></tr>
         {% for e in expenses %}
         <tr><td>{{ e.date }}</td><td>{{ e.category }}</td><td>GHS {{ e.amount }}</td><td>{{ e.note }}</td></tr>
         {% endfor %}
     </table>
+
+    <script>
+        const ctx = document.getElementById('categoryChart');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: {{ categories|tojson }},
+                datasets: [{
+                    data: {{ amounts|tojson }},
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+                }]
+            },
+            options: { 
+                plugins: { title: { display: true, text: 'Spending by Category' } }
+            }
+        });
+    </script>
 </body>
 </html>
