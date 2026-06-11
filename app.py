@@ -15,7 +15,15 @@ def index():
     expenses = conn.execute('SELECT * FROM expenses ORDER BY date DESC').fetchall()
     total = conn.execute('SELECT SUM(amount) as total FROM expenses').fetchone()['total'] or 0
     conn.close()
-    return render_template('index.html', expenses=expenses, total=total)
+    return render_template('index.html', expenses=expenses, total=total) 
+    category_totals = conn.execute(
+    'SELECT category, SUM(amount) as total FROM expenses GROUP BY category'
+).fetchall()
+conn.close()
+
+# Convert to lists for Chart.js
+categories = [row['category'] for row in category_totals]
+amounts = [row['total'] for row in category_totals]
 
 @app.route('/add', methods=['POST'])
 def add():
