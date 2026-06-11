@@ -15,7 +15,8 @@ def index():
     expenses = conn.execute('SELECT * FROM expenses ORDER BY date DESC').fetchall()
     total = conn.execute('SELECT SUM(amount) as total FROM expenses').fetchone()['total'] or 0
     conn.close()
-    return render_template('index.html', expenses=expenses, total=total) 
+    return render_template('index.html', expenses=expenses, total=total, 
+                       categories=categories, amounts=amounts)
     category_totals = conn.execute(
     'SELECT category, SUM(amount) as total FROM expenses GROUP BY category'
 ).fetchall()
